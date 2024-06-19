@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pracovní pozice</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Pracovní pozice</h1>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    {% if jobs is not empty %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Název</th>
+            <th>Popis</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for job in jobs %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ job.getTitle }}</td>
+                <td>{{ job.getDescription|u.truncate(150, '...') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Žádné inzeráty nenalezeny.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if pagination is not empty and pagination.getEntriesTotal > 0 %}
+    <nav>
+        <ul class="pagination">
+            {% set total_pages = (pagination.getEntriesTotal / per_page)|round(0, 'ceil') %}
+            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('jobs', {'page': page - 1, 'per_page': per_page}) }}">Předchozí</a>
+            </li>
+            {% for i in 1..total_pages %}
+                <li class="page-item {% if i == page %}active{% endif %}">
+                    <a class="page-link" href="{{ path('jobs', {'page': i, 'per_page': per_page}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+            <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('jobs', {'page': page + 1, 'per_page': per_page}) }}">Další</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+</body>
+</html>
